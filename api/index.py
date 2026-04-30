@@ -5,6 +5,11 @@ from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
+# Add this so the API doesn't 404 when hit directly
+@app.route('/')
+def home():
+    return "API is running. Use /api/clean for processing."
+
 @app.route('/api/clean', methods=['POST'])
 def clean_site():
     data = request.json
@@ -21,25 +26,15 @@ def clean_site():
         response = requests.get(url, headers=headers)
         soup = BeautifulSoup(response.text, 'html.parser')
 
-        # Target Canva-specific branding
-        watermark_selectors = [
-            '._1Q9m1w', 
-            '[aria-label="Canva"]',
-            '.canva-watermark',
-            'footer'
-        ]
+        watermark_selectors = ['._1Q9m1w', '[aria-label="Canva"]', '.canva-watermark', 'footer']
 
         for selector in watermark_selectors:
             for el in soup.select(selector):
                 el.decompose()
 
-        # Inject a base tag so images/scripts still load from Canva's servers
         base_tag = soup.new_tag('base', href=url)
         soup.head.insert(0, base_tag)
 
         return jsonify({"html": soup.prettify()})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-# Required for Vercel
-app.debug = True
