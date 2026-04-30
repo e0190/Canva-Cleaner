@@ -1,0 +1,19 @@
+# .gitignore
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.venv/
+env/
+venv/
+ENV/
+
+# Vercel
+.vercel
+
+# OS files
+.DS_Store
+Thumbs.db
