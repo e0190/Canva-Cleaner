@@ -1,0 +1,4 @@
+# requirements.txt
+flask
+requests
+beautifulsoup4
